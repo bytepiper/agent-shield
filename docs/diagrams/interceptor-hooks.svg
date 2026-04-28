@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" fill="none">
+  <defs>
+    <style>
+      .bg { fill: #0f1115; }
+      .title { fill: #f8fafc; font-family: Arial, sans-serif; font-size: 34px; font-weight: 700; }
+      .subtitle { fill: #b8c0d4; font-family: Arial, sans-serif; font-size: 18px; }
+      .box-title { fill: #f8fafc; font-family: Arial, sans-serif; font-size: 21px; font-weight: 700; }
+      .text { fill: #dce3ef; font-family: Arial, sans-serif; font-size: 16px; }
+      .small { fill: #aeb9ca; font-family: Arial, sans-serif; font-size: 14px; }
+      .mono { fill: #e5e7eb; font-family: "Courier New", monospace; font-size: 13px; }
+      .stage { fill: #151922; stroke: #374151; stroke-width: 2; rx: 14; }
+      .interceptor { fill: #171c26; stroke: #3a4457; stroke-width: 2; rx: 12; }
+      .hook { fill: #172637; stroke: #8ecfff; stroke-width: 2; rx: 12; }
+      .decision { fill: #16281d; stroke: #86efac; stroke-width: 2; rx: 12; }
+      .upstream { fill: #2a1820; stroke: #fb7185; stroke-width: 2; rx: 12; }
+      .warn { fill: #2a2015; stroke: #fbbf24; stroke-width: 2; rx: 12; }
+      .line { stroke: #cbd5e1; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .blue { stroke: #8ecfff; marker-end: url(#arrowBlue); }
+      .green { stroke: #86efac; marker-end: url(#arrowGreen); }
+      .red { stroke: #fb7185; marker-end: url(#arrowRed); }
+      .dash { stroke-dasharray: 8 8; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#cbd5e1"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8ecfff"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#86efac"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#fb7185"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1280" height="760"/>
+
+  <text class="title" x="56" y="58">Interceptor Hook Flow</text>
+  <text class="subtitle" x="56" y="90">The Interceptor captures traffic, calls hooks, then applies the returned decision.</text>
+
+  <rect class="stage" x="56" y="140" width="1168" height="145"/>
+  <text class="box-title" x="88" y="176">1. Connection setup</text>
+  <rect class="interceptor" x="88" y="198" width="245" height="62"/>
+  <text class="text" x="118" y="236">CONNECT host:443</text>
+  <path class="line" d="M333 229 H430"/>
+  <rect class="interceptor" x="430" y="190" width="260" height="78"/>
+  <text class="text" x="460" y="220">Parse proxy connection</text>
+  <text class="small" x="460" y="244">host, port, SNI, session</text>
+  <path class="line blue" d="M690 229 H790"/>
+  <rect class="hook" x="790" y="190" width="200" height="78"/>
+  <text class="mono" x="824" y="220">connect.pre</text>
+  <text class="small" x="824" y="244">policy before tunnel</text>
+  <path class="line green" d="M990 229 H1080"/>
+  <rect class="decision" x="1080" y="190" width="112" height="78"/>
+  <text class="text" x="1106" y="222">allow</text>
+  <text class="small" x="1106" y="246">or block</text>
+
+  <rect class="stage" x="56" y="320" width="1168" height="178"/>
+  <text class="box-title" x="88" y="356">2. Request and stream content</text>
+  <rect class="interceptor" x="88" y="382" width="245" height="80"/>
+  <text class="text" x="118" y="414">Normalize content</text>
+  <text class="small" x="118" y="438">HTTP request, WS out, SSE in</text>
+  <path class="line blue" d="M333 422 H430"/>
+  <rect class="hook" x="430" y="362" width="210" height="122"/>
+  <text class="mono" x="462" y="392">http.request</text>
+  <text class="mono" x="462" y="424">ws.message.out</text>
+  <text class="mono" x="462" y="456">sse.event.in</text>
+  <path class="line green" d="M640 422 H740"/>
+  <rect class="decision" x="740" y="374" width="230" height="96"/>
+  <text class="box-title" x="772" y="410">Decision</text>
+  <text class="small" x="772" y="438">allow, block, modify,</text>
+  <text class="small" x="772" y="458">replace, route</text>
+  <path class="line red" d="M970 422 H1080"/>
+  <rect class="upstream" x="1080" y="382" width="112" height="80"/>
+  <text class="text" x="1106" y="414">forward</text>
+  <text class="small" x="1106" y="438">or reroute</text>
+
+  <rect class="stage" x="56" y="535" width="1168" height="145"/>
+  <text class="box-title" x="88" y="571">3. Response path</text>
+  <rect class="upstream" x="88" y="593" width="245" height="62"/>
+  <text class="text" x="118" y="631">Response arrives</text>
+  <path class="line" d="M333 624 H430"/>
+  <rect class="interceptor" x="430" y="585" width="210" height="78"/>
+  <text class="text" x="462" y="615">Normalize response</text>
+  <text class="small" x="462" y="639">HTTP body, WS in, SSE in</text>
+  <path class="line blue" d="M640 624 H740"/>
+  <rect class="hook" x="740" y="585" width="230" height="78"/>
+  <text class="mono" x="772" y="615">http.response</text>
+  <text class="mono" x="772" y="639">ws.message.in</text>
+  <path class="line green" d="M970 624 H1080"/>
+  <rect class="decision" x="1080" y="585" width="112" height="78"/>
+  <text class="text" x="1106" y="617">apply</text>
+  <text class="small" x="1106" y="641">send back</text>
+
+  <rect class="warn" x="56" y="700" width="1168" height="40"/>
+  <text class="small" x="88" y="725">Rule: the Interceptor does not invent policy. It only captures traffic, calls hooks, and applies the returned decision.</text>
+</svg>

@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" fill="none">
+  <defs>
+    <style>
+      .bg { fill: #0f1115; }
+      .title { fill: #f8fafc; font-family: Arial, sans-serif; font-size: 34px; font-weight: 700; }
+      .subtitle { fill: #b8c0d4; font-family: Arial, sans-serif; font-size: 18px; }
+      .box-title { fill: #f8fafc; font-family: Arial, sans-serif; font-size: 21px; font-weight: 700; }
+      .text { fill: #dce3ef; font-family: Arial, sans-serif; font-size: 16px; }
+      .small { fill: #aeb9ca; font-family: Arial, sans-serif; font-size: 14px; }
+      .mono { fill: #e5e7eb; font-family: "Courier New", monospace; font-size: 13px; }
+      .source { fill: #172033; stroke: #60a5fa; stroke-width: 2; rx: 12; }
+      .shield { fill: #1f2937; stroke: #fbbf24; stroke-width: 3; rx: 16; }
+      .decision { fill: #16281d; stroke: #86efac; stroke-width: 2; rx: 10; }
+      .output { fill: #182637; stroke: #67e8f9; stroke-width: 2; rx: 12; }
+      .external { fill: #2a1820; stroke: #fb7185; stroke-width: 2; rx: 12; }
+      .usecase { fill: #181d28; stroke: #3b4658; stroke-width: 2; rx: 12; }
+      .line { stroke: #cbd5e1; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .blue { stroke: #60a5fa; marker-end: url(#arrowBlue); }
+      .green { stroke: #86efac; marker-end: url(#arrowGreen); }
+      .cyan { stroke: #67e8f9; marker-end: url(#arrowCyan); }
+      .red { stroke: #fb7185; marker-end: url(#arrowRed); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#cbd5e1"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#60a5fa"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#86efac"/>
+    </marker>
+    <marker id="arrowCyan" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#67e8f9"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#fb7185"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1280" height="760"/>
+
+  <text class="title" x="56" y="58">Agent Shield Architecture</text>
+  <text class="subtitle" x="56" y="90">One control layer for AI agent traffic: observe, alert, modify, route, and track worker state.</text>
+
+  <rect class="source" x="70" y="170" width="230" height="118"/>
+  <text class="box-title" x="105" y="207">AI agents</text>
+  <text class="text" x="105" y="238">Codex, Claude, Gemini</text>
+  <text class="small" x="105" y="264">CLI tools, scripts, workers</text>
+
+  <rect class="source" x="70" y="340" width="230" height="108"/>
+  <text class="box-title" x="105" y="378">Traffic</text>
+  <text class="text" x="105" y="410">HTTP, websocket, SSE</text>
+
+  <path class="line blue" d="M300 229 H420"/>
+  <path class="line blue" d="M300 394 H420"/>
+
+  <rect class="shield" x="420" y="150" width="380" height="380"/>
+  <text class="box-title" x="470" y="190">Agent Shield</text>
+  <text class="text" x="470" y="224">MITM proxy + orchestrator</text>
+  <text class="small" x="470" y="256">intercept routed traffic</text>
+  <text class="small" x="470" y="282">normalize events and payloads</text>
+  <text class="small" x="470" y="308">run listeners and handlers</text>
+  <text class="small" x="470" y="334">apply allow / block / modify / route</text>
+  <text class="small" x="470" y="360">emit audit and worker status</text>
+  <rect class="decision" x="470" y="405" width="280" height="44"/>
+  <text class="mono" x="493" y="432">allow / block / modify / route</text>
+
+  <path class="line green" d="M800 210 H930"/>
+  <path class="line cyan" d="M800 350 H930"/>
+  <path class="line red" d="M800 490 H930"/>
+
+  <rect class="external" x="930" y="160" width="270" height="100"/>
+  <text class="box-title" x="962" y="196">Model routing</text>
+  <text class="text" x="962" y="226">External APIs or local LLMs</text>
+  <text class="small" x="962" y="246">OpenAI, Anthropic, Ollama</text>
+
+  <rect class="output" x="930" y="300" width="270" height="104"/>
+  <text class="box-title" x="962" y="336">Listeners and alerts</text>
+  <text class="text" x="962" y="366">Audit, dashboard, Telegram</text>
+  <text class="small" x="962" y="388">copy events, no blocking</text>
+
+  <rect class="external" x="930" y="440" width="270" height="120"/>
+  <text class="box-title" x="962" y="476">Traffic modification</text>
+  <text class="text" x="962" y="506">Redact, replace, block, reroute</text>
+  <text class="small" x="962" y="530">requests, responses,</text>
+  <text class="small" x="962" y="550">WS and SSE messages</text>
+
+  <rect class="usecase" x="60" y="590" width="220" height="96"/>
+  <text class="box-title" x="88" y="626">Data protection</text>
+  <text class="small" x="88" y="652">secrets, private code,</text>
+  <text class="small" x="88" y="672">customer data, telemetry</text>
+
+  <rect class="usecase" x="310" y="590" width="220" height="96"/>
+  <text class="box-title" x="338" y="626">Audit trail</text>
+  <text class="small" x="338" y="652">who sent what, where,</text>
+  <text class="small" x="338" y="672">when, and decision applied</text>
+
+  <rect class="usecase" x="560" y="590" width="220" height="96"/>
+  <text class="box-title" x="588" y="626">Worker status</text>
+  <text class="small" x="588" y="652">busy / available, task,</text>
+  <text class="small" x="588" y="672">blocked state</text>
+
+  <rect class="usecase" x="810" y="590" width="220" height="96"/>
+  <text class="box-title" x="838" y="626">Cost control</text>
+  <text class="small" x="838" y="652">local-first routing, budgets,</text>
+  <text class="small" x="838" y="672">latency and model policies</text>
+
+  <rect class="usecase" x="1060" y="590" width="160" height="96"/>
+  <text class="box-title" x="1088" y="626">DLP</text>
+  <text class="small" x="1088" y="652">rules, classifiers,</text>
+  <text class="small" x="1088" y="672">local LLM checks</text>
+</svg>

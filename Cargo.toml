@@ -1,0 +1,33 @@
+[package]
+name = "agent-shield"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1"
+tokio = { version = "1", features = ["full"] }
+hyper = { version = "1", features = ["full"] }
+hyper-util = { version = "0.1", features = ["full"] }
+http-body-util = "0.1"
+bytes = "1"
+http = "1"
+rcgen = { version = "0.14.7", features = ["pem", "x509-parser", "ring"] }
+rustls = { version = "0.23", features = ["ring"] }
+rustls-pemfile = "2"
+tokio-rustls = "0.26"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+regex = "1"
+zstd = "0.13"
+flate2 = "1"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+axum = "0.8"
+rustls-native-certs = "0.8"
+pem = "3"
+rsa = "0.9"
+async-nats = "0.42"
+base64 = "0.22"
+futures-util = "0.3"
+async-trait = "0.1"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }

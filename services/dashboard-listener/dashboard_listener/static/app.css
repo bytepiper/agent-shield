@@ -1,0 +1,19 @@
+input[type="search"]::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+.column-resizer::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  height: 64%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: rgba(82, 90, 108, 0.55);
+}
+
+.column-resizer:hover::before,
+.column-resizer:active::before {
+  background: rgba(74, 222, 128, 0.75);
+}

@@ -1,0 +1,13 @@
+dist/
+__pycache__/
+*.pyc
+.codex
+target/
+**/target/
+apps/dashboard/node_modules/
+apps/dashboard/dist/
+apps/dashboard/.vite/
+apps/dashboard/*.tsbuildinfo
+/screens/
+press/
+/_archive/

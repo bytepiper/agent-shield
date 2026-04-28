@@ -1,0 +1,92 @@
+<div id="traffic-table" hx-get="/fragments/traffic" hx-trigger="every 2s" hx-swap="outerHTML" hx-include="#traffic-filters" class="h-full overflow-auto" data-testid="listener-traffic-table">
+  <table class="min-w-full table-fixed text-left text-xs" data-testid="listener-traffic-table-inner">
+    <colgroup>
+      <col data-col="time" style="width: 7.5rem">
+      <col data-col="action" style="width: 7rem">
+      <col data-col="method" style="width: 6rem">
+      <col data-col="domain" style="width: 11rem">
+      <col data-col="url">
+      <col data-col="bodies" style="width: 7.5rem">
+      <col data-col="size" style="width: 6.5rem">
+      <col data-col="flow" style="width: 5rem">
+    </colgroup>
+    <thead class="sticky top-0 bg-black">
+      <tr class="border-b border-zinc-800 text-zinc-500">
+        {% for header in traffic.headers %}
+          <th class="relative overflow-hidden border-r border-zinc-900/70 px-3 py-2 last:border-r-0" data-col="{{ header.field }}" data-testid="listener-sort-header-{{ header.field }}">
+            <button
+              class="max-w-full truncate font-medium hover:text-zinc-300"
+              data-testid="listener-sort-button-{{ header.field }}"
+              onclick="setSortState('{{ header.field }}', '{{ header.next_dir }}')"
+              hx-get="/fragments/traffic"
+              hx-target="#traffic-table"
+              hx-include="#traffic-filters"
+              hx-swap="outerHTML"
+            >{{ header.label }}</button>
+            <div class="column-resizer absolute right-0 top-0 z-10 h-full w-3 cursor-col-resize" data-column="{{ header.field }}" data-testid="listener-column-resizer-{{ header.field }}"></div>
+          </th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% if traffic.rows %}
+        {% for row in traffic.rows %}
+          <tr
+            class="cursor-pointer border-b border-zinc-900 hover:bg-zinc-900/70"
+            data-listener-id="{{ row.listener_id }}"
+            data-testid="listener-traffic-row"
+            hx-get="/fragments/detail/{{ row.listener_id }}?tab=overview"
+            hx-target="#detail-content"
+            hx-swap="innerHTML"
+            onclick="rememberDetailSelection({{ row.listener_id }}, 'overview'); openDetailPane()"
+          >
+            <td class="overflow-hidden border-r border-zinc-950 px-3 py-2 text-zinc-400 last:border-r-0" data-col="time"><div class="truncate">{{ row.time }}</div></td>
+            <td class="overflow-hidden border-r border-zinc-950 px-3 py-2 {{ row.action_class }} last:border-r-0" data-col="action"><div class="truncate">{{ row.action }}</div></td>
+            <td class="overflow-hidden border-r border-zinc-950 px-3 py-2 text-zinc-200 last:border-r-0" data-col="method"><div class="truncate">{{ row.method }}</div></td>
+            <td class="overflow-hidden border-r border-zinc-950 px-3 py-2 text-zinc-100 last:border-r-0" data-col="domain"><div class="truncate">{{ row.domain }}</div></td>
+            <td class="min-w-0 overflow-hidden border-r border-zinc-950 px-3 py-2 text-zinc-300 last:border-r-0" data-col="url">
+              <div class="truncate">{{ row.url }}</div>
+              {% if row.preview %}
+                <div class="mt-1 truncate text-[10px] text-zinc-500">{{ row.preview }}</div>
+              {% endif %}
+            </td>
+            <td class="overflow-hidden border-r border-zinc-950 px-3 py-2 last:border-r-0" data-col="bodies">
+              {% if row.has_req_body or row.has_resp_body %}
+                <div class="flex flex-nowrap gap-2">
+                  {% if row.has_req_body %}
+                    <button
+                      class="rounded border border-emerald-500/60 px-2 py-0.5 text-[10px] text-emerald-300 hover:bg-emerald-500/10"
+                      data-testid="listener-open-req-body"
+                      onclick="event.stopPropagation(); rememberDetailSelection({{ row.listener_id }}, 'req'); openDetailPane();"
+                      hx-get="/fragments/detail/{{ row.listener_id }}?tab=req"
+                      hx-target="#detail-content"
+                      hx-swap="innerHTML"
+                    >REQ</button>
+                  {% endif %}
+                  {% if row.has_resp_body %}
+                    <button
+                      class="rounded border border-amber-500/60 px-2 py-0.5 text-[10px] text-amber-300 hover:bg-amber-500/10"
+                      data-testid="listener-open-resp-body"
+                      onclick="event.stopPropagation(); rememberDetailSelection({{ row.listener_id }}, 'resp'); openDetailPane();"
+                      hx-get="/fragments/detail/{{ row.listener_id }}?tab=resp"
+                      hx-target="#detail-content"
+                      hx-swap="innerHTML"
+                    >RESP</button>
+                  {% endif %}
+                </div>
+              {% else %}
+                <span class="text-zinc-600">-</span>
+              {% endif %}
+            </td>
+            <td class="overflow-hidden border-r border-zinc-950 px-3 py-2 text-zinc-500 last:border-r-0" data-col="size"><div class="truncate">{{ row.size }}</div></td>
+            <td class="overflow-hidden border-r border-zinc-950 px-3 py-2 text-zinc-500 last:border-r-0" data-col="flow"><div class="truncate">{{ row.flow }}</div></td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="8" class="px-3 py-10 text-center text-zinc-500" data-testid="listener-empty-traffic">No LLM traffic yet</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,25 @@
+<div
+  id="stats"
+  data-testid="listener-stats"
+  hx-get="/fragments/stats"
+  hx-trigger="every 2s"
+  hx-swap="outerHTML"
+  class="ml-auto flex items-center gap-5 text-[11px] font-medium"
+>
+  <div class="flex items-baseline gap-2" data-testid="listener-stat-events">
+    <span class="uppercase tracking-[0.16em] text-zinc-500">events</span>
+    <span class="text-cyan-300">{{ stats.events_count }}</span>
+  </div>
+  <div class="flex items-baseline gap-2" data-testid="listener-stat-domains">
+    <span class="uppercase tracking-[0.16em] text-zinc-500">domains</span>
+    <span class="text-emerald-300">{{ stats.domains_count }}</span>
+  </div>
+  <div class="flex items-baseline gap-2" data-testid="listener-stat-sessions">
+    <span class="uppercase tracking-[0.16em] text-zinc-500">sessions</span>
+    <span class="text-violet-300">{{ stats.sessions_count }}</span>
+  </div>
+  <div class="flex items-baseline gap-2" data-testid="listener-stat-updated">
+    <span class="uppercase tracking-[0.16em] text-zinc-500">updated</span>
+    <span class="text-zinc-200">{{ stats.updated }}</span>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+<form id="traffic-filters" class="grid grid-cols-[minmax(0,1.2fr)_minmax(10rem,0.8fr)_minmax(9rem,0.7fr)_minmax(12rem,0.8fr)_auto] gap-3 border-b border-zinc-800 px-4 py-3" data-testid="listener-filters">
+  <input type="hidden" name="sort" id="sort-field" value="{{ filters.sort_by }}" />
+  <input type="hidden" name="dir" id="sort-dir" value="{{ filters.sort_dir }}" />
+  <input
+    class="cursor-text rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-cyan-500"
+    type="search"
+    name="q"
+    data-testid="listener-search-input"
+    value="{{ filters.q }}"
+    placeholder="Search URL, preview, prompt, method"
+    hx-get="/fragments/traffic"
+    hx-target="#traffic-table"
+    hx-swap="outerHTML"
+    hx-include="#traffic-filters"
+    hx-trigger="keyup changed delay:250ms"
+  />
+  <input
+    class="cursor-text rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-cyan-500"
+    type="search"
+    name="domain"
+    data-testid="listener-domain-filter"
+    value="{{ filters.domain }}"
+    placeholder="Filter domain"
+    hx-get="/fragments/traffic"
+    hx-target="#traffic-table"
+    hx-swap="outerHTML"
+    hx-include="#traffic-filters"
+    hx-trigger="keyup changed delay:250ms"
+  />
+  <input
+    class="cursor-text rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-cyan-500"
+    type="search"
+    name="method"
+    data-testid="listener-method-filter"
+    value="{{ filters.method }}"
+    placeholder="Filter method"
+    hx-get="/fragments/traffic"
+    hx-target="#traffic-table"
+    hx-swap="outerHTML"
+    hx-include="#traffic-filters"
+    hx-trigger="keyup changed delay:250ms"
+  />
+  <input
+    class="cursor-text rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-cyan-500"
+    type="search"
+    name="phase"
+    data-testid="listener-phase-filter"
+    value="{{ filters.phase }}"
+    placeholder="Filter phase"
+    hx-get="/fragments/traffic"
+    hx-target="#traffic-table"
+    hx-swap="outerHTML"
+    hx-include="#traffic-filters"
+    hx-trigger="keyup changed delay:250ms"
+  />
+  <details id="columns-menu" class="relative self-start" data-testid="listener-columns-menu">
+    <summary class="cursor-pointer list-none rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs text-zinc-300 hover:border-zinc-700 hover:text-zinc-100" data-testid="listener-columns-menu-button">
+      Columns
+    </summary>
+    <div class="absolute right-0 z-20 mt-2 w-56 rounded border border-zinc-800 bg-[#0b0b0d] p-3 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+      <div class="mb-2 text-[10px] uppercase tracking-[0.16em] text-zinc-500">Visible columns</div>
+      <div class="space-y-2">
+        <label class="flex items-center gap-2 text-xs text-zinc-300">
+          <input class="column-toggle accent-cyan-500" type="checkbox" data-column="time" data-testid="listener-column-toggle-time" checked />
+          <span>Time</span>
+        </label>
+        <label class="flex items-center gap-2 text-xs text-zinc-300">
+          <input class="column-toggle accent-cyan-500" type="checkbox" data-column="action" data-testid="listener-column-toggle-action" checked />
+          <span>Action</span>
+        </label>
+        <label class="flex items-center gap-2 text-xs text-zinc-300">
+          <input class="column-toggle accent-cyan-500" type="checkbox" data-column="method" data-testid="listener-column-toggle-method" checked />
+          <span>Method</span>
+        </label>
+        <label class="flex items-center gap-2 text-xs text-zinc-300">
+          <input class="column-toggle accent-cyan-500" type="checkbox" data-column="domain" data-testid="listener-column-toggle-domain" checked />
+          <span>Domain</span>
+        </label>
+        <label class="flex items-center gap-2 text-xs text-zinc-300">
+          <input class="column-toggle accent-cyan-500" type="checkbox" data-column="url" data-testid="listener-column-toggle-url" checked />
+          <span>URL</span>
+        </label>
+        <label class="flex items-center gap-2 text-xs text-zinc-300">
+          <input class="column-toggle accent-cyan-500" type="checkbox" data-column="bodies" data-testid="listener-column-toggle-bodies" checked />
+          <span>Bodies</span>
+        </label>
+        <label class="flex items-center gap-2 text-xs text-zinc-300">
+          <input class="column-toggle accent-cyan-500" type="checkbox" data-column="size" data-testid="listener-column-toggle-size" checked />
+          <span>Size</span>
+        </label>
+        <label class="flex items-center gap-2 text-xs text-zinc-300">
+          <input class="column-toggle accent-cyan-500" type="checkbox" data-column="flow" data-testid="listener-column-toggle-flow" checked />
+          <span>Flow</span>
+        </label>
+      </div>
+      <div class="mt-3 text-[10px] text-zinc-500">At least one column must stay visible.</div>
+    </div>
+  </details>
+</form>

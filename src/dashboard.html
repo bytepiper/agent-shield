@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Agent Shield</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#000; color:#F8F8F2; font-family:'SF Mono','Fira Code',monospace; font-size:12px; }
+  h1 { color:#FD971F; font-size:18px; padding:12px 16px; border-bottom:1px solid #3B3A32; display:flex; align-items:center; gap:12px; }
+  .stats { display:flex; gap:24px; padding:10px 16px; border-bottom:1px solid #3B3A32; }
+  .stat { text-align:center; }
+  .stat-val { font-size:22px; font-weight:bold; }
+  .stat-label { color:#75715E; font-size:10px; }
+  .green { color:#A6E22E; } .red { color:#F92672; } .orange { color:#FD971F; } .cyan { color:#66D9EF; } .purple { color:#AE81FF; }
+
+  /* Controls */
+  .controls { display:flex; gap:12px; padding:8px 16px; border-bottom:1px solid #3B3A32; align-items:center; flex-wrap:wrap; }
+  .toggle { display:flex; align-items:center; gap:6px; cursor:pointer; padding:4px 10px; border:1px solid #3B3A32; border-radius:4px; font-size:11px; }
+  .toggle.on { border-color:#A6E22E; color:#A6E22E; }
+  .toggle.off { border-color:#F92672; color:#F92672; }
+  .toggle:hover { background:#141411; }
+  .controls-label { color:#75715E; font-size:10px; margin-right:4px; }
+
+  /* Tabs */
+  .tabs { display:flex; border-bottom:1px solid #3B3A32; }
+  .tab { padding:8px 16px; cursor:pointer; color:#75715E; font-size:12px; }
+  .tab.active { color:#FD971F; border-bottom:2px solid #FD971F; }
+
+  /* Table */
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; padding:6px 12px; color:#75715E; border-bottom:1px solid #3B3A32; font-weight:normal; position:sticky; top:0; background:#000; }
+  td { padding:4px 12px; border-bottom:1px solid #1a1a1a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:400px; }
+  tr { cursor:pointer; }
+  tr:hover { background:#141411; }
+  .action-mitm { color:#66D9EF; }
+  .action-passthrough { color:#75715E; }
+  .action-blocked, .action-blocked-secret, .action-blocked-telemetry { color:#F92672; font-weight:bold; }
+  .action-request { color:#A6E22E; }
+  .action-response { color:#E6DB74; }
+  .action-ws-out { color:#A6E22E; font-weight:bold; }
+  .action-ws-in { color:#66D9EF; font-weight:bold; }
+  .alert-row { background:rgba(249,38,114,0.08); }
+  .body-actions { display:flex; gap:6px; }
+  .body-btn { border:1px solid #3B3A32; background:#111; color:#F8F8F2; padding:2px 6px; font-size:10px; cursor:pointer; border-radius:3px; }
+  .body-btn.req { color:#A6E22E; border-color:#A6E22E; }
+  .body-btn.resp { color:#E6DB74; border-color:#E6DB74; }
+  .body-btn:hover { background:#1b1b18; }
+  .cell-main { overflow:hidden; text-overflow:ellipsis; }
+  .cell-preview { color:#75715E; font-size:10px; overflow:hidden; text-overflow:ellipsis; }
+
+  /* Layout */
+  .main { display:flex; height:calc(100vh - 145px); }
+  .list-pane { flex:1; overflow-y:auto; }
+  .detail-pane { width:0; overflow:hidden; transition:width 0.2s; border-left:1px solid #3B3A32; background:#0a0a0a; }
+  .detail-pane.open { width:45%; min-width:400px; }
+  .detail-header { display:flex; justify-content:space-between; padding:8px 12px; border-bottom:1px solid #3B3A32; color:#FD971F; }
+  .detail-close { cursor:pointer; color:#75715E; }
+  .detail-close:hover { color:#F8F8F2; }
+  .detail-tabs { display:flex; border-bottom:1px solid #3B3A32; }
+  .detail-tab { padding:6px 14px; cursor:pointer; color:#75715E; font-size:11px; }
+  .detail-tab.active { color:#A6E22E; border-bottom:2px solid #A6E22E; }
+  .detail-body { padding:12px; overflow:auto; height:calc(100% - 72px); white-space:pre-wrap; word-break:break-all; font-size:11px; line-height:1.5; }
+  .detail-body .key { color:#66D9EF; }
+  .detail-body .str { color:#E6DB74; }
+  .detail-body .num { color:#AE81FF; }
+  .detail-body .bool { color:#F92672; }
+  .detail-body .null { color:#75715E; }
+  .headers-grid { display:grid; grid-template-columns:minmax(140px,220px) 1fr; gap:8px 12px; align-items:start; }
+  .headers-name { color:#66D9EF; word-break:break-word; }
+  .headers-value { color:#E6DB74; word-break:break-word; white-space:pre-wrap; }
+
+  /* Bodies list */
+  .body-item { padding:6px 12px; border-bottom:1px solid #1a1a1a; cursor:pointer; display:flex; justify-content:space-between; }
+  .body-item:hover { background:#141411; }
+  .body-name { color:#A6E22E; overflow:hidden; text-overflow:ellipsis; }
+  .body-size { color:#75715E; white-space:nowrap; margin-left:12px; }
+  .body-req { color:#A6E22E; }
+  .body-resp { color:#E6DB74; }
+  .body-blocked { color:#F92672; }
+</style>
+</head>
+<body data-testid="dashboard-root">
+<h1 data-testid="dashboard-title">&#x1F6E1; Agent Shield</h1>
+<div class="stats" data-testid="stats-bar">
+  <div class="stat" data-testid="stat-requests"><div class="stat-val cyan" id="s-req">0</div><div class="stat-label">requests</div></div>
+  <div class="stat" data-testid="stat-blocked"><div class="stat-val red" id="s-block">0</div><div class="stat-label">blocked</div></div>
+  <div class="stat" data-testid="stat-alerts"><div class="stat-val orange" id="s-alert">0</div><div class="stat-label">alerts</div></div>
+  <div class="stat" data-testid="stat-domains"><div class="stat-val green" id="s-domains">0</div><div class="stat-label">domains</div></div>
+</div>
+<div class="controls" data-testid="dashboard-controls">
+  <span class="controls-label">Controls:</span>
+  <div class="toggle on" id="tog-telemetry" data-testid="filter-telemetry" onclick="toggleConfig('block_telemetry')">&#x1F6AB; Telemetry</div>
+  <div class="toggle on" id="tog-secrets" data-testid="filter-secrets" onclick="toggleConfig('scan_secrets')">&#x1F50D; Secrets</div>
+</div>
+<div class="tabs" data-testid="main-tabs">
+  <div class="tab active" data-testid="tab-traffic" onclick="showTab('traffic')">Traffic</div>
+  <div class="tab" data-testid="tab-alerts" onclick="showTab('alerts')">Alerts</div>
+  <div class="tab" data-testid="tab-packets" onclick="showTab('packets')">Packets</div>
+</div>
+<div class="main" data-testid="dashboard-main">
+  <div class="list-pane" id="list-pane">
+    <table data-testid="traffic-table"><thead><tr><th>Time</th><th>Action</th><th>Method</th><th>Domain</th><th>URL</th><th>Bodies</th><th>Size</th><th>ms</th></tr></thead><tbody id="tbody" data-testid="traffic-table-body"></tbody></table>
+  </div>
+  <div class="detail-pane" id="detail-pane" data-testid="detail-pane">
+    <div class="detail-header" data-testid="detail-header"><span id="detail-title" data-testid="detail-title">Packet</span><span class="detail-close" data-testid="detail-close" onclick="closeDetail()">&#x2715;</span></div>
+    <div class="detail-tabs" id="detail-tabs" data-testid="detail-tabs"></div>
+    <div class="detail-body" id="detail-body" data-testid="detail-body"></div>
+  </div>
+</div>
+<script>
+let currentTab = 'traffic';
+let config = {};
+
+function showTab(t) {
+  currentTab = t;
+  document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.textContent.toLowerCase() === t));
+  closeDetail();
+  refresh();
+}
+
+let detailCache = {};
+
+function hasInlineBody(body) {
+  return !!(body && (typeof body.text === 'string' || typeof body.base64 === 'string'));
+}
+
+function renderEventBody(body) {
+  if (!body) return '<span class="null">No body</span>';
+  const meta = [];
+  if (typeof body.bytes === 'number') meta.push('bytes=' + body.bytes);
+  if (body.truncated) meta.push('truncated');
+  const metaHtml = meta.length
+    ? '<div style="color:#75715E; margin-bottom:8px;">' + escapeHtml(meta.join(' ')) + '</div>'
+    : '';
+  if (typeof body.text === 'string') {
+    return metaHtml + syntaxHighlight(body.text);
+  }
+  if (typeof body.base64 === 'string') {
+    return metaHtml + syntaxHighlight(JSON.stringify({
+      encoding: 'base64',
+      data: body.base64
+    }, null, 2));
+  }
+  return '<span class="null">No body</span>';
+}
+
+function formatHeaders(headers) {
+  if (!headers || !headers.length) return '<span class="null">No headers</span>';
+  return '<div class="headers-grid">' + headers.map(h =>
+    '<div class="headers-name">' + syntaxHighlight(JSON.stringify(h.name)) + '</div>' +
+    '<div class="headers-value">' + syntaxHighlight(JSON.stringify(h.value)) + '</div>'
+  ).join('') + '</div>';
+}
+
+function openBodyFile(name, title, inlineBody) {
+  document.getElementById('detail-title').textContent = title || name;
+  document.getElementById('detail-tabs').innerHTML = '';
+  document.getElementById('detail-pane').classList.add('open');
+  if (hasInlineBody(inlineBody)) {
+    document.getElementById('detail-body').innerHTML = renderEventBody(inlineBody);
+    return;
+  }
+  if (!name) {
+    document.getElementById('detail-body').innerHTML = '<span class="null">No body</span>';
+    return;
+  }
+  document.getElementById('detail-body').innerHTML = '<span class="purple">Loading...</span>';
+  fetch('/api/body/' + name)
+    .then(res => res.text())
+    .then(text => { document.getElementById('detail-body').innerHTML = syntaxHighlight(text); })
+    .catch(err => { document.getElementById('detail-body').innerHTML = '<span class="red">Error: ' + err + '</span>'; });
+}
+
+function renderBodyActions(e, idx) {
+  const actions = [];
+  if (e.req_body_file || hasInlineBody(e.req_body)) {
+    const file = JSON.stringify(e.req_body_file);
+    const title = JSON.stringify('Request Body #' + idx);
+    const body = JSON.stringify(e.req_body || null);
+    actions.push(`<button class="body-btn req" data-testid="open-request-body" onclick='event.stopPropagation(); openBodyFile(${file}, ${title}, ${body})'>REQ</button>`);
+  }
+  if (e.resp_body_file || hasInlineBody(e.resp_body)) {
+    const file = JSON.stringify(e.resp_body_file);
+    const title = JSON.stringify('Response Body #' + idx);
+    const body = JSON.stringify(e.resp_body || null);
+    actions.push(`<button class="body-btn resp" data-testid="open-response-body" onclick='event.stopPropagation(); openBodyFile(${file}, ${title}, ${body})'>RESP</button>`);
+  }
+  return actions.length ? '<div class="body-actions">' + actions.join('') + '</div>' : '';
+}
+
+function closeDetail() {
+  document.getElementById('detail-pane').classList.remove('open');
+  detailCache = {};
+}
+
+function openDetail(entry) {
+  const e = typeof entry === 'string' ? JSON.parse(entry) : entry;
+  const title = (e.method||'') + ' ' + (e.domain||'') + ' ' + (e.url||'');
+  document.getElementById('detail-title').textContent = title;
+
+  detailCache = {
+    overview: JSON.stringify({
+      id: e.id,
+      ts: e.ts,
+      action: e.action,
+      method: e.method,
+      domain: e.domain,
+      url: e.url,
+      status: e.status,
+      req_bytes: e.req_bytes,
+      resp_bytes: e.resp_bytes,
+      duration_ms: e.duration_ms,
+      alerts: e.alerts || []
+    }, null, 2),
+    reqHeaders: e.req_headers || [],
+    respHeaders: e.resp_headers || [],
+    reqBody: e.req_body || null,
+    respBody: e.resp_body || null,
+    reqFile: e.req_body_file,
+    respFile: e.resp_body_file
+  };
+
+  let tabs = '<div class="detail-tab active" data-testid="detail-tab-overview" onclick="showDetailTab(\'overview\')">Overview</div>';
+  if (detailCache.reqHeaders.length) tabs += '<div class="detail-tab" data-testid="detail-tab-reqh" onclick="showDetailTab(\'reqh\')">Request Headers</div>';
+  if (detailCache.respHeaders.length) tabs += '<div class="detail-tab" data-testid="detail-tab-resph" onclick="showDetailTab(\'resph\')">Response Headers</div>';
+  if (e.req_body_file || hasInlineBody(e.req_body)) tabs += '<div class="detail-tab" data-testid="detail-tab-req" onclick="showDetailTab(\'req\')">Request Body</div>';
+  if (e.resp_body_file || hasInlineBody(e.resp_body)) tabs += '<div class="detail-tab" data-testid="detail-tab-resp" onclick="showDetailTab(\'resp\')">Response Body</div>';
+  document.getElementById('detail-tabs').innerHTML = tabs;
+
+  showDetailTab('overview');
+  document.getElementById('detail-pane').classList.add('open');
+}
+
+async function showDetailTab(tab) {
+  const labels = {overview: 'overview', reqh: 'request headers', resph: 'response headers', req: 'request body', resp: 'response body'};
+  document.querySelectorAll('.detail-tab').forEach(el => el.classList.toggle('active', el.textContent.toLowerCase() === labels[tab]));
+  const body = document.getElementById('detail-body');
+
+  if (tab === 'overview') {
+    body.innerHTML = syntaxHighlight(detailCache.overview || '{}');
+  } else if (tab === 'reqh') {
+    body.innerHTML = formatHeaders(detailCache.reqHeaders);
+  } else if (tab === 'resph') {
+    body.innerHTML = formatHeaders(detailCache.respHeaders);
+  } else if (tab === 'req') {
+    if (hasInlineBody(detailCache.reqBody)) {
+      body.innerHTML = renderEventBody(detailCache.reqBody);
+      return;
+    }
+    if (!detailCache.reqFile) {
+      body.innerHTML = '<span class="null">No body</span>';
+      return;
+    }
+    body.innerHTML = '<span class="purple">Loading...</span>';
+    try {
+      const res = await fetch('/api/body/' + detailCache.reqFile);
+      const text = await res.text();
+      body.innerHTML = syntaxHighlight(text);
+    } catch(e) { body.innerHTML = '<span class="red">Error: '+e+'</span>'; }
+  } else if (tab === 'resp') {
+    if (hasInlineBody(detailCache.respBody)) {
+      body.innerHTML = renderEventBody(detailCache.respBody);
+      return;
+    }
+    if (!detailCache.respFile) {
+      body.innerHTML = '<span class="null">No body</span>';
+      return;
+    }
+    body.innerHTML = '<span class="purple">Loading...</span>';
+    try {
+      const res = await fetch('/api/body/' + detailCache.respFile);
+      const text = await res.text();
+      body.innerHTML = syntaxHighlight(text);
+    } catch(e) { body.innerHTML = '<span class="red">Error: '+e+'</span>'; }
+  }
+}
+
+function syntaxHighlight(json) {
+  if (typeof json !== 'string') json = JSON.stringify(json, null, 2);
+  json = json.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+    let cls = 'num';
+    if (/^"/.test(match)) { cls = /:$/.test(match) ? 'key' : 'str'; }
+    else if (/true|false/.test(match)) { cls = 'bool'; }
+    else if (/null/.test(match)) { cls = 'null'; }
+    return '<span class="'+cls+'">'+match+'</span>';
+  });
+}
+
+function escapeHtml(text) {
+  return String(text ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+async function loadBody(name) {
+  try {
+    const res = await fetch('/api/body/' + name);
+    const text = await res.text();
+    document.getElementById('detail-title').textContent = name;
+    document.getElementById('detail-tabs').innerHTML = '';
+    document.getElementById('detail-body').innerHTML = syntaxHighlight(text);
+    document.getElementById('detail-pane').classList.add('open');
+  } catch(err) {
+    document.getElementById('detail-title').textContent = name;
+    document.getElementById('detail-tabs').innerHTML = '';
+    document.getElementById('detail-body').innerHTML = '<span class="red">Error loading: ' + err + '</span>';
+    document.getElementById('detail-pane').classList.add('open');
+  }
+}
+
+async function toggleConfig(key) {
+  const val = !config[key];
+  await fetch('/api/config', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({[key]: val})
+  });
+  loadConfig();
+}
+
+async function loadConfig() {
+  try {
+    const res = await fetch('/api/config');
+    config = await res.json();
+    const togTel = document.getElementById('tog-telemetry');
+    const togSec = document.getElementById('tog-secrets');
+    togTel.className = 'toggle ' + (config.block_telemetry ? 'on' : 'off');
+    togTel.innerHTML = (config.block_telemetry ? '&#x1F6AB;' : '&#x2705;') + ' Telemetry';
+    togSec.className = 'toggle ' + (config.scan_secrets ? 'on' : 'off');
+    togSec.innerHTML = (config.scan_secrets ? '&#x1F50D;' : '&#x26A0;') + ' Secrets';
+  } catch(e) {}
+}
+
+async function refresh() {
+  try {
+    if (currentTab === 'packets') {
+      const res = await fetch('/api/bodies');
+      const bodies = await res.json() || [];
+      const tbody = document.getElementById('tbody');
+      const listPane = document.getElementById('list-pane');
+      listPane.innerHTML = '<div style="padding:8px" data-testid="packet-body-list">' + bodies.map(b => {
+        const dir = b.name.includes('_req') ? 'body-req' : b.name.includes('_resp') ? 'body-resp' : b.name.includes('_blocked') ? 'body-blocked' : '';
+        const sz = b.size > 1024 ? (b.size/1024).toFixed(1)+'KB' : b.size+'B';
+        return '<div class="body-item" data-testid="packet-body-list-item" onclick="loadBody(\''+b.name+'\')"><span class="body-name '+dir+'">'+b.name+'</span><span class="body-size">'+sz+'</span></div>';
+      }).join('') + '</div>';
+      return;
+    }
+
+    // Restore table if switching from packets
+    const listPane = document.getElementById('list-pane');
+    if (!listPane.querySelector('table')) {
+      listPane.innerHTML = '<table data-testid="traffic-table"><thead><tr><th>Time</th><th>Action</th><th>Method</th><th>Domain</th><th>URL</th><th>Bodies</th><th>Size</th><th>ms</th></tr></thead><tbody id="tbody" data-testid="traffic-table-body"></tbody></table>';
+    }
+
+    const [trafficRes, alertsRes, statsRes] = await Promise.all([
+      fetch('/api/traffic'), fetch('/api/alerts'), fetch('/api/stats')
+    ]);
+    const traffic = await trafficRes.json();
+    const alerts = await alertsRes.json();
+    const stats = await statsRes.json();
+    document.getElementById('s-req').textContent = stats.total_requests || 0;
+    document.getElementById('s-block').textContent = stats.total_blocked || 0;
+    document.getElementById('s-alert').textContent = stats.total_alerts || 0;
+    document.getElementById('s-domains').textContent = Object.keys(stats.domains || {}).length;
+    const items = currentTab === 'alerts' ? (alerts||[]) : (traffic||[]);
+    const tbody = document.getElementById('tbody');
+    if (!tbody) return;
+    window._trafficItems = [];
+    tbody.innerHTML = items.slice(-200).reverse().map(e => {
+      const cls = 'action-' + (e.action||'').replace(/\s/g,'-');
+      const isAlert = (e.alerts && e.alerts.length > 0) ? 'alert-row' : '';
+      const size = (e.req_bytes||'') + (e.req_bytes && e.resp_bytes ? '→' : '') + (e.resp_bytes||'');
+      const ts = e.ts ? e.ts.split('T')[1]?.split('.')[0] || e.ts : '';
+      const alertInfo = e.alerts ? e.alerts.map(a=>'<span class="red">['+a.pattern+']</span>').join(' ') : '';
+      const preview = e.preview ? '<div class="cell-preview" title="'+escapeHtml(e.preview)+'">'+escapeHtml(e.preview)+'</div>' : '';
+      const urlCell = '<div class="cell-main">'+escapeHtml((e.url||'').slice(0,80))+' '+alertInfo+'</div>' + preview;
+      const idx = window._trafficItems ? window._trafficItems.length : 0;
+      if (!window._trafficItems) window._trafficItems = [];
+      window._trafficItems.push(e);
+      return '<tr class="'+isAlert+'" data-testid="traffic-row" onclick="openDetail(window._trafficItems['+idx+'])"><td>'+ts+'</td><td class="'+cls+'">'+escapeHtml(e.action||'')+'</td><td>'+escapeHtml(e.method||'')+'</td><td>'+escapeHtml(e.domain||'')+'</td><td title="'+escapeHtml(e.url||'')+'">'+urlCell+'</td><td>'+renderBodyActions(e, e.id||idx)+'</td><td>'+size+'</td><td>'+(e.duration_ms||'')+'</td></tr>';
+    }).join('');
+  } catch(err) {}
+}
+
+loadConfig();
+setInterval(refresh, 2000);
+setInterval(loadConfig, 5000);
+refresh();
+</script>
+</body>
+</html>

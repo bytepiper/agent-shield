@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" fill="none">
+  <defs>
+    <style>
+      .bg { fill: #0f1115; }
+      .title { fill: #f8fafc; font-family: Arial, sans-serif; font-size: 42px; font-weight: 700; }
+      .subtitle { fill: #cbd5e1; font-family: Arial, sans-serif; font-size: 24px; }
+      .box-title { fill: #f8fafc; font-family: Arial, sans-serif; font-size: 28px; font-weight: 700; }
+      .text { fill: #dce3ef; font-family: Arial, sans-serif; font-size: 22px; }
+      .small { fill: #b8c3d4; font-family: Arial, sans-serif; font-size: 19px; }
+      .mono { fill: #e5e7eb; font-family: "Courier New", monospace; font-size: 18px; }
+      .input { fill: #172033; stroke: #60a5fa; stroke-width: 3; rx: 16; }
+      .shield { fill: #1f2937; stroke: #fbbf24; stroke-width: 4; rx: 22; }
+      .output { fill: #182637; stroke: #67e8f9; stroke-width: 3; rx: 16; }
+      .policy { fill: #16281d; stroke: #86efac; stroke-width: 3; rx: 16; }
+      .modify { fill: #2a1820; stroke: #fb7185; stroke-width: 3; rx: 16; }
+      .line { stroke: #cbd5e1; stroke-width: 5; fill: none; marker-end: url(#arrow); }
+      .blue { stroke: #60a5fa; marker-end: url(#arrowBlue); }
+      .green { stroke: #86efac; marker-end: url(#arrowGreen); }
+      .cyan { stroke: #67e8f9; marker-end: url(#arrowCyan); }
+      .red { stroke: #fb7185; marker-end: url(#arrowRed); }
+    </style>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#cbd5e1"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#60a5fa"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#86efac"/>
+    </marker>
+    <marker id="arrowCyan" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#67e8f9"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#fb7185"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="900"/>
+
+  <text class="title" x="70" y="70">Agent Shield</text>
+  <text class="subtitle" x="70" y="112">Traffic control for AI coding agents</text>
+
+  <rect class="input" x="70" y="210" width="270" height="150"/>
+  <text class="box-title" x="105" y="260">AI agents</text>
+  <text class="text" x="105" y="300">Codex, Claude,</text>
+  <text class="text" x="105" y="330">Gemini, workers</text>
+
+  <rect class="input" x="70" y="450" width="270" height="150"/>
+  <text class="box-title" x="105" y="500">Traffic</text>
+  <text class="text" x="105" y="540">HTTP, WS, SSE</text>
+  <text class="small" x="105" y="572">prompts, logs, code</text>
+
+  <path class="line blue" d="M340 285 H430"/>
+  <path class="line blue" d="M340 525 H430"/>
+
+  <rect class="shield" x="430" y="180" width="340" height="450"/>
+  <text class="box-title" x="485" y="240">Agent Shield</text>
+  <text class="text" x="485" y="292">Intercept traffic</text>
+  <text class="text" x="485" y="336">Normalize events</text>
+  <text class="text" x="485" y="380">Run policies</text>
+  <text class="text" x="485" y="424">Apply decisions</text>
+  <rect class="policy" x="470" y="490" width="270" height="64"/>
+  <text class="mono" x="505" y="530">allow / block / route</text>
+
+  <path class="line green" d="M770 270 H860"/>
+  <rect class="policy" x="860" y="210" width="270" height="120"/>
+  <text class="box-title" x="900" y="258">Route models</text>
+  <text class="small" x="900" y="298">local model or cloud API</text>
+
+  <path class="line cyan" d="M770 405 H860"/>
+  <rect class="output" x="860" y="350" width="270" height="120"/>
+  <text class="box-title" x="900" y="398">Listen and alert</text>
+  <text class="small" x="900" y="438">dashboards, logs, alerts</text>
+
+  <path class="line red" d="M770 540 H860"/>
+  <rect class="modify" x="860" y="480" width="270" height="170"/>
+  <text class="box-title" x="900" y="528">Modify traffic</text>
+  <text class="small" x="900" y="568">redact, replace, block</text>
+  <text class="small" x="900" y="596">reroute requests</text>
+  <text class="small" x="900" y="624">and responses</text>
+
+  <rect class="output" x="70" y="700" width="260" height="130"/>
+  <text class="box-title" x="105" y="746">Audit trail</text>
+  <text class="small" x="105" y="784">what was sent,</text>
+  <text class="small" x="105" y="812">where and when</text>
+
+  <rect class="output" x="370" y="700" width="260" height="130"/>
+  <text class="box-title" x="405" y="746">Worker status</text>
+  <text class="small" x="405" y="784">busy, free, current task</text>
+
+  <rect class="output" x="670" y="700" width="260" height="130"/>
+  <text class="box-title" x="705" y="746">DLP checks</text>
+  <text class="small" x="705" y="784">secrets, private code,</text>
+  <text class="small" x="705" y="812">customer data</text>
+</svg>

@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" fill="none">
+  <defs>
+    <style>
+      .bg { fill: #0f1115; }
+      .title { fill: #f8fafc; font-family: Arial, sans-serif; font-size: 34px; font-weight: 700; }
+      .subtitle { fill: #b8c0d4; font-family: Arial, sans-serif; font-size: 18px; }
+      .box-title { fill: #f8fafc; font-family: Arial, sans-serif; font-size: 21px; font-weight: 700; }
+      .text { fill: #dce3ef; font-family: Arial, sans-serif; font-size: 16px; }
+      .small { fill: #aeb9ca; font-family: Arial, sans-serif; font-size: 14px; }
+      .mono { fill: #e5e7eb; font-family: "Courier New", monospace; font-size: 13px; }
+      .box { fill: #171c26; stroke: #3a4457; stroke-width: 2; rx: 12; }
+      .client { fill: #172033; stroke: #60a5fa; stroke-width: 2; rx: 12; }
+      .bus { fill: #2a2015; stroke: #fbbf24; stroke-width: 2; rx: 12; }
+      .orch { fill: #1f2937; stroke: #86efac; stroke-width: 2; rx: 12; }
+      .listener { fill: #182637; stroke: #67e8f9; stroke-width: 2; rx: 12; }
+      .handler { fill: #16281d; stroke: #86efac; stroke-width: 2; rx: 12; }
+      .upstream { fill: #2a1820; stroke: #fb7185; stroke-width: 2; rx: 12; }
+      .note { fill: #151922; stroke: #374151; stroke-width: 2; rx: 12; }
+      .line { stroke: #cbd5e1; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .blue { stroke: #60a5fa; marker-end: url(#arrowBlue); }
+      .yellow { stroke: #fbbf24; marker-end: url(#arrowYellow); }
+      .green { stroke: #86efac; marker-end: url(#arrowGreen); }
+      .cyan { stroke: #67e8f9; marker-end: url(#arrowCyan); }
+      .red { stroke: #fb7185; marker-end: url(#arrowRed); }
+      .dash { stroke-dasharray: 8 8; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#cbd5e1"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#60a5fa"/>
+    </marker>
+    <marker id="arrowYellow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#86efac"/>
+    </marker>
+    <marker id="arrowCyan" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#67e8f9"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#fb7185"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1280" height="760"/>
+
+  <text class="title" x="56" y="58">Current Runtime Flow</text>
+  <text class="subtitle" x="56" y="90">Traffic is captured by the Interceptor, evaluated by the Orchestrator, then applied back to the live flow.</text>
+
+  <rect class="client" x="60" y="170" width="220" height="110"/>
+  <text class="box-title" x="92" y="208">AI CLI traffic</text>
+  <text class="text" x="92" y="238">HTTP, websocket, SSE</text>
+  <text class="small" x="92" y="260">Codex, Claude, Gemini, curl</text>
+
+  <path class="line blue" d="M280 225 H390"/>
+
+  <rect class="box" x="390" y="150" width="270" height="150"/>
+  <text class="box-title" x="430" y="188">Interceptor</text>
+  <text class="text" x="430" y="220">capture and normalize</text>
+  <text class="small" x="430" y="246">request, response, WS message,</text>
+  <text class="small" x="430" y="266">or SSE event becomes one event</text>
+
+  <path class="line yellow" d="M660 225 H760"/>
+
+  <rect class="bus" x="760" y="172" width="180" height="106"/>
+  <text class="box-title" x="804" y="208">NATS</text>
+  <text class="mono" x="790" y="236">ash.hooks.decision</text>
+  <text class="small" x="790" y="258">sync request/reply</text>
+
+  <path class="line yellow" d="M940 225 H1040"/>
+
+  <rect class="orch" x="1040" y="150" width="190" height="150"/>
+  <text class="box-title" x="1074" y="188">Orchestrator</text>
+  <text class="text" x="1074" y="220">build context</text>
+  <text class="small" x="1074" y="246">fan out callbacks</text>
+  <text class="small" x="1074" y="266">return one decision</text>
+
+  <path class="line cyan" d="M1135 300 V340 H905 V370"/>
+  <rect class="listener" x="780" y="370" width="250" height="100"/>
+  <text class="box-title" x="812" y="406">Listeners</text>
+  <text class="text" x="812" y="436">audit, dashboard, alerts</text>
+  <text class="small" x="812" y="458">copy events, no blocking</text>
+
+  <path class="line green" d="M1135 300 V420"/>
+  <rect class="handler" x="1040" y="420" width="190" height="120"/>
+  <text class="box-title" x="1074" y="456">Handler</text>
+  <text class="text" x="1074" y="486">policy decision</text>
+  <text class="small" x="1074" y="510">allow, block, modify,</text>
+  <text class="small" x="1074" y="530">replace, route</text>
+
+  <path class="line green" d="M1040 480 H525 V520"/>
+  <rect class="box" x="390" y="520" width="270" height="120"/>
+  <text class="box-title" x="430" y="556">Apply result</text>
+  <text class="text" x="430" y="586">live traffic changes here</text>
+  <text class="small" x="430" y="610">pass through, block, rewrite,</text>
+  <text class="small" x="430" y="630">or route to another target</text>
+
+  <path class="line red" d="M525 640 V670 H780"/>
+  <rect class="upstream" x="780" y="620" width="250" height="100"/>
+  <text class="box-title" x="812" y="656">Upstream target</text>
+  <text class="text" x="812" y="686">cloud API or local model</text>
+  <text class="small" x="812" y="708">destination after policy</text>
+
+  <rect class="note" x="60" y="510" width="220" height="120"/>
+  <text class="box-title" x="92" y="546">Runtime split</text>
+  <text class="small" x="92" y="576">Interceptor owns capture</text>
+  <text class="small" x="92" y="596">and mutation.</text>
+  <text class="small" x="92" y="622">Orchestrator owns callbacks</text>
+  <text class="small" x="92" y="642">and decision translation.</text>
+</svg>
